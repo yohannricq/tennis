@@ -19,22 +19,44 @@ public class TestConnection {
             //Postgres Driver officiel
             conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tennis","postgres","p@ssw0rd");
 
-            PreparedStatement preparedStatement=conn.prepareStatement("UPDATE joueur SET nom=?, prenom=? WHERE id=?");
-            long identifiant=24L;
-            String nom = "Errani";
-            String prenom = "Sara";
+            conn.setAutoCommit(false);
+
+            PreparedStatement preparedStatement=conn.prepareStatement("INSERT INTO joueur(nom, prenom, sexe) VALUES(?, ?, ?)");
+            
+            String nom = "Capriati";
+            String prenom = "Jennifer";
+            String sexe = "F";
 
             preparedStatement.setString(1, nom);
             preparedStatement.setString(2, prenom);
-            preparedStatement.setLong(3,identifiant);
+            preparedStatement.setString(3, sexe);
 
-            int nbRowsUpdated = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-            System.out.println("Nombre lignes modifiées : " + nbRowsUpdated);
+            nom = "Johannson";
+            prenom = "Thomas";
+            sexe = "H";
+
+            preparedStatement.setString(1, nom);
+            preparedStatement.setString(2, prenom);
+            preparedStatement.setString(3, sexe);
+            //preparedStatement.setNull(3, java.sql.Types.CHAR);//Pour provoquer le rollback
+
+            preparedStatement.executeUpdate();
+
+            conn.commit();
+
             System.out.println("success");
 
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                if(conn != null)
+                    conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            
         }
         finally {
             try {
