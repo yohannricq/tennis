@@ -1,0 +1,46 @@
+# === Compilations & builds Maven ===
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper-downloader.properties
+
+# === Logs & fichiers temporaires ===
+*.log
+*.tmp
+*.bak
+*.swp
+
+# === IDE spécifiques ===
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# === Rapports & couverture ===
+/site/
+/coverage/
+/jacoco.exec
+/surefire-reports/
+/failsafe-reports/
+
+# === Systèmes d’exploitation ===
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
