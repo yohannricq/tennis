@@ -11,6 +11,14 @@ public class Joueur {
     }
 
 
+    public Joueur(Long id, String nom, String prenom, Character sexe) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.sexe = sexe;
+    }
+
+
     public Joueur(String nom, String prenom, Character sexe) {
         
         this.nom = nom;

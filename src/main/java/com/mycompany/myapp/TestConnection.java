@@ -1,5 +1,7 @@
 package com.mycompany.myapp;
 
+import java.util.List;
+
 import com.mycompany.myapp.entity.Joueur;
 import com.mycompany.myapp.repository.JoueurRepositoryImplementation;
 
@@ -9,16 +11,21 @@ public class TestConnection {
         
         JoueurRepositoryImplementation repository = new JoueurRepositoryImplementation();
 
-        //repository.getById(21L);
+        /* Joueur joueur = new Joueur("Noah", "Yannik", 'H');
+        repository.create(joueur); */
 
-        /* Joueur joueur1 = new Joueur("Noah", "Yannik", 'H');
-        repository.create(joueur1); */
+        /* Joueur joueur = repository.getById(57L);
+        joueur.setPrenom("Yannick");
+        repository.update(joueur); */
 
-        Joueur joueur1 = repository.getById(55L);
+        //repository.delete(57L);
 
-        joueur1.setPrenom("Yannick");
+        List<Joueur> joueurs = repository.getAll();
 
-        repository.update(joueur1);
+        for (Joueur joueur : joueurs) {
+            
+            System.out.println(String.format("Joueur -> id:%d|nom:%s|prenom:%s|sexe:%c", joueur.getId(), joueur.getNom(), joueur.getPrenom(), joueur.getSexe()));
+        }
 
     }
 }

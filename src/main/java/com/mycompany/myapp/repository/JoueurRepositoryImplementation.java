@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -21,6 +23,8 @@ public class JoueurRepositoryImplementation {
 
             conn = dataSource.getConnection();
 
+            conn.setAutoCommit(false);
+
             PreparedStatement preparedStatement = conn
                     .prepareStatement("INSERT INTO joueur(nom, prenom, sexe) VALUES(?, ?, ?)");
 
@@ -29,6 +33,8 @@ public class JoueurRepositoryImplementation {
             preparedStatement.setString(3, joueur.getSexe().toString());
 
             preparedStatement.executeUpdate();
+
+            conn.commit();
 
             System.out.println(String.format("Succes : Joueur %s %s de sexe %c créé", joueur.getPrenom(), joueur.getNom(), joueur.getSexe()));
 
@@ -108,6 +114,56 @@ public class JoueurRepositoryImplementation {
         return joueur;
     }
 
+    public List<Joueur> getAll(){
+
+        Connection connect = null;
+
+        List<Joueur> joueurs = new ArrayList<>();
+
+        try {
+            
+        DataSource dataSource = DataSourceProvider.getSingleDataSource();
+
+        connect = dataSource.getConnection();
+
+        PreparedStatement preparedStatement = connect.prepareStatement("SELECT id, nom, prenom, sexe FROM joueur");
+
+        ResultSet rs = preparedStatement.executeQuery();
+
+        while (rs.next()) {
+            
+            Long id = rs.getLong("id");
+            String nom = rs.getString("nom");
+            String prenom = rs.getString("prenom");
+            Character sexe = rs.getString("sexe").charAt(0);
+
+            Joueur joueur = new Joueur(id, nom, prenom, sexe);
+
+            joueurs.add(joueur);
+        }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (connect != null)
+                    connect.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
+        } finally {
+            try {
+                if (connect != null) {
+                    connect.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return joueurs;
+    }
+
     public void update(Joueur joueur) {
 
         Connection conn = null;
@@ -116,6 +172,8 @@ public class JoueurRepositoryImplementation {
             DataSource dataSource = DataSourceProvider.getSingleDataSource();
 
             conn = dataSource.getConnection();
+
+            conn.setAutoCommit(false);
 
             PreparedStatement preparedStatement = conn
                     .prepareStatement("UPDATE joueur SET nom=?, prenom=?, sexe=? WHERE id=?");
@@ -126,6 +184,8 @@ public class JoueurRepositoryImplementation {
             preparedStatement.setLong(4, joueur.getId());
 
             preparedStatement.executeUpdate();
+
+            conn.commit();
 
             System.out.println("Succes : Joueur mis à jour");
 
@@ -148,4 +208,47 @@ public class JoueurRepositoryImplementation {
             }
         }
     }
+
+    public void delete(long id){
+
+        Connection connect = null;
+
+        try {
+
+            DataSource dataSource = DataSourceProvider.getSingleDataSource();
+
+            connect = dataSource.getConnection();
+
+            connect.setAutoCommit(false);
+
+            PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM joueur WHERE id=?");
+
+            preparedStatement.setLong(1, id);
+
+            preparedStatement.executeUpdate();
+
+            connect.commit();
+
+            System.out.println("Joueur avec l'id " + id + " supprimé");
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                if (connect != null)
+                    connect.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
+        } finally {
+            try {
+                if (connect != null) {
+                    connect.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
