@@ -1,80 +1,24 @@
 package com.mycompany.myapp;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.postgresql.ds.PGSimpleDataSource;
+import com.mycompany.myapp.entity.Joueur;
+import com.mycompany.myapp.repository.JoueurRepositoryImplementation;
 
 public class TestConnection {
 
     public static void main(String... args){
-        Connection conn = null;
-        try {
-            
-            PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        
+        JoueurRepositoryImplementation repository = new JoueurRepositoryImplementation();
 
-            String url = "jdbc:postgresql://localhost:5432/tennis";
-            dataSource.setURL(url);
-            dataSource.setUser("postgres");
-            dataSource.setPassword("p@ssw0rd");
-            //MySQL driver MySQL Connector
-            //conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tennis?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris","COURSDB","COURSDB");
-            //Oracle Driver officiel OJDBC Thin
-            //conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:tennis","COURSDB","COURSDB");
-            //Postgres Driver officiel
-            //conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tennis","postgres","p@ssw0rd");
+        //repository.getById(21L);
 
-            conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
+        /* Joueur joueur1 = new Joueur("Noah", "Yannik", 'H');
+        repository.create(joueur1); */
 
-            PreparedStatement preparedStatement=conn.prepareStatement("INSERT INTO joueur(nom, prenom, sexe) VALUES(?, ?, ?)");
-            
-            String nom = "Capriati";
-            String prenom = "Jennifer";
-            String sexe = "F";
+        Joueur joueur1 = repository.getById(55L);
 
-            preparedStatement.setString(1, nom);
-            preparedStatement.setString(2, prenom);
-            preparedStatement.setString(3, sexe);
+        joueur1.setPrenom("Yannick");
 
-            preparedStatement.executeUpdate();
+        repository.update(joueur1);
 
-            nom = "Johannson";
-            prenom = "Thomas";
-            sexe = "H";
-
-            preparedStatement.setString(1, nom);
-            preparedStatement.setString(2, prenom);
-            preparedStatement.setString(3, sexe);
-            //preparedStatement.setNull(3, java.sql.Types.CHAR);//Pour provoquer le rollback
-
-            preparedStatement.executeUpdate();
-
-            conn.commit();
-
-            System.out.println("success");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if(conn != null)
-                    conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
